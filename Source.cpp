@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 using namespace std;
 
 const int mapSize = 9;
@@ -12,7 +13,7 @@ const int mapSize = 9;
 // nested for loop with values i and j that increment as long as i < map array size 
 // infile >> mapArray[i][j]
 
-
+void loadMap(int mapArray[mapSize][mapSize], int mapSelect);
 
 
 int main()
@@ -35,7 +36,7 @@ int main()
 	int yOneUpVal;											//value of the previously selected row +1 but one column over (this would actually be down on the map)
 	int ySamePosVal;										//value of the previously selected row but one column over
 	int yOneDownVal;										//value of the previously selected row -1 but one column over (this would actually be up on the map)
-
+	int startingPoint;										//where on the map to start
 	int routeOneSum;										//the sum of all lowest values on the current lowest route. If two starting values are the same
 															//used to compare the two routes to see which one is quicker by seeing which sum is lower
 	int routeTwoSum;										//the sum of all lowest values on the route that has an equal starting value to the current lowest
@@ -66,66 +67,8 @@ int main()
 			cout << "map3.txt" << endl;
 			cin >> mapSelect;
 
-			//start of map select if 1 is pressed
-			if (mapSelect == 1)												//loads map 
-			{
-				ifstream infile("map1.txt");
-				if (!infile)
-				{
-					cout << "error! Unable to open file" << endl;
-				}
-				else
-				{
-					for (int i = 0; i < mapSize; i++)						//inputs map into the array
-					{
-						for (int k = 0; k < mapSize; k++)
-						{
-							infile >> mapArray[i][k];
-						}
-					}
-				}
-			}
-			//end of map select if 1 is pressed
-			//start of map select if 2 is pressed
-			else if (mapSelect == 2)
-			{
-				ifstream infile("map2.txt");
-				if (!infile)
-				{
-					cout << "error! Unable to open file" << endl;
-				}
-				else
-				{
-					for (int i = 0; i < mapSize; i++)
-					{
-						for (int k = 0; k < mapSize; k++)
-						{
-							infile >> mapArray[i][k];
-						}
-					}
-				}
-			}
-			//end of map select if 2 is pressed
-			//start of map select if 3 is pressed
-			else if (mapSelect == 3)
-			{
-				ifstream infile("map3.txt");
-				if (!infile)
-				{
-					cout << "error! Unable to open file" << endl;
-				}
-				else
-				{
-					for (int i = 0; i < mapSize; i++)
-					{
-						for (int k = 0; k < mapSize; k++)
-						{
-							infile >> mapArray[i][k];
-						}
-					}
-				}
-			}
-			//end of map select if 3 is pressed
+			loadMap(mapArray, mapSelect);
+
 			mapLoaded = true;
 		}
 		//end of interface select if 1 is pressed
@@ -150,31 +93,23 @@ int main()
 
 			if (mountainPassSelect == 1)
 			{
-				lowestNumber = mapArray[0][0];
+				cout << "please input a starting location (0-8)" << endl;
+				cin >> startingPoint;
 
-				for (int i = 0; i < mapSize; i++)
+				while (startingPoint > 8 || startingPoint < 0)
 				{
-					if (mapArray[i][0] < lowestNumber)
-					{
-						lowestNumber = mapArray[i][0];
-						lowestNumberPosition = i;
-						currentColumn = 0;
-						currentRow = i;
-					}
-					else if (mapArray[i][0] == lowestNumber)
-					{
-						//do the entire display for the numbers, add each number up and compare the two values to see which is lower
-						//routeOneSum = (insert code here)
-						//routeTwoSum = (insert code here)
-						/*if (routeTwoSum < routeOneSum)
-						{
-						lowestNumber = mapArray[i][0];
-						lowestNumberPosition = i;
-						}*/
-					}
+					system("cls");
+					cout << "please input a starting location (0-8)" << endl;
+					cin >> startingPoint;
 				}
+				
+				cout << mapArray[startingPoint][0] << ", ";								//outputs the users selected row
 
-				for (int c = 0; c < mapSize; c++)								//column												
+				currentColumn = 1;														//the current column should be the second one 
+
+				currentRow = startingPoint;												//the current row should be the one the user selected to start
+
+				for (int c = 1; c < mapSize; c++)								//column												
 				{
 					if (currentRow > mapSize - 2)
 					{
@@ -224,11 +159,12 @@ int main()
 					}
 					else
 					{
-						cout << "5";
+						cout << "5";													//testing
 					}
 
 					cout << mapArray[lowestNumberPosition][c] << ", ";					//Display the numbers for passing the mountain 
 					currentColumn += 1;
+					currentRow = lowestNumberPosition;									//half an hour of frustration went into this one line
 				}
 				cout << endl;
 				system("pause");
@@ -249,4 +185,63 @@ int main()
 
 
 	system("pause");
+}
+
+
+void loadMap(int mapArray[mapSize][mapSize], int mapSelect)
+{
+	if (mapSelect == 1)
+	{
+		ifstream infile("map1.txt");
+		if (!infile)
+		{
+			cout << "error! Unable to open file" << endl;
+		}
+		else
+		{
+			for (int i = 0; i < mapSize; i++)
+			{
+				for (int k = 0; k < mapSize; k++)
+				{
+					infile >> mapArray[i][k];
+				}
+			}
+		}
+	}
+	if (mapSelect == 2)
+	{
+		ifstream infile("map2.txt");
+		if (!infile)
+		{
+			cout << "error! Unable to open file" << endl;
+		}
+		else
+		{
+			for (int i = 0; i < mapSize; i++)
+			{
+				for (int k = 0; k < mapSize; k++)
+				{
+					infile >> mapArray[i][k];
+				}
+			}
+		}
+	}
+	if (mapSelect == 3)
+	{
+		ifstream infile("map3.txt");
+		if (!infile)
+		{
+			cout << "error! Unable to open file" << endl;
+		}
+		else
+		{
+			for (int i = 0; i < mapSize; i++)
+			{
+				for (int k = 0; k < mapSize; k++)
+				{
+					infile >> mapArray[i][k];
+				}
+			}
+		}
+	}
 }
