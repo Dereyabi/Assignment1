@@ -13,6 +13,12 @@ const int mapSize = 9;
 // else 
 // nested for loop with values i and j that increment as long as i < map array size 
 // infile >> mapArray[i][j]
+void rotateMap(int mapArray[mapSize][mapSize]);
+
+void reflectMap(int mapArray[mapSize][mapSize]);
+
+void transposeMap(int mapArray[mapSize][mapSize]);
+
 void outputMap(int mapArray[mapSize][mapSize]);
 
 int passMountain(int currentRow, int mapArray[mapSize][mapSize], int currentColumn);
@@ -30,7 +36,7 @@ int main()
 	int currentRow;											//the current row that the mountain pass section has selected to be the lowest value, used to 
 															//determine what is one up, one down and the same as the row that was previously selected
 	int currentColumn;										//the current column that the mountain pass has to go through
-
+	
 	int nextNumber;											//value returned from the mountain pass function to determine which row to go onto next
 	int startingPoint;										//user inputs where on the map to start 0-8
 	bool mapLoaded = false;									//determines whether a map has been loaded so if the user asks a map to be displayed without
@@ -42,12 +48,15 @@ int main()
 		cout << "Choose a map file and then display the map" << endl;			//display the current map that has been loaded or exit the program
 		cout << "(1) Choose map file" << endl;
 		cout << "(2) Display current map file" << endl;
-		cout << "(3) Exit the program" << endl;
-		cin >> interfaceSelect;
+		cout << "(3) Rotate current map 90 degrees clockwise" << endl;
+		cout << "(4) Reflect Map" << endl;
+		cout << "(5) Transpose Map" << endl;
+		cout << "(6) Exit the program" << endl;
+		cin >> interfaceSelect;												
 
-		while (interfaceSelect < 1 || interfaceSelect > 3)						//validation to make sure nothing over 3 or under 1 is typed 
+		while (interfaceSelect < 1 || interfaceSelect > 6)						//validation to make sure nothing over 3 or under 1 is typed 
 		{
-			cout << "please input a number between 1 and 3" << endl;
+			cout << "please input a number between 1 and 6" << endl;
 			cin >> interfaceSelect;
 		}
 		//start of interface select if 1 is pressed
@@ -61,7 +70,7 @@ int main()
 			cin >> mapSelect;
 
 			loadMap(mapArray, mapSelect);										//plays loadMap function that loads the .txt file 
-
+			rotateMap(mapArray);												//rotates the map so the co-ordinates and the array numbers match
 			mapLoaded = true;													//validation in case a map hasnt been loaded 								
 		}
 		//end of interface select if 1 is pressed
@@ -79,7 +88,7 @@ int main()
 
 			if (mountainPassSelect == 1)
 			{
-				cout << "please input a starting location (0-8)" << endl;
+				cout << "please input a starting location (0-8)" << endl;					
 				cin >> startingPoint;											//the co-ordinate to start at on the first column of the map
 
 				while (startingPoint > 8 || startingPoint < 0)					//validation to make sure the user inputs a number within the array size
@@ -96,7 +105,7 @@ int main()
 				for (int c = 1; c < mapSize; c++)								//plays the passMountain function to find the best route									
 				{
 					nextNumber = passMountain(currentRow, mapArray, c);
-					currentRow = nextNumber;
+					currentRow = nextNumber;									
 					cout << mapArray[nextNumber][c] << ", ";					//displays each subsequent lowest number to get through the mountain
 				}
 
@@ -105,14 +114,26 @@ int main()
 			}
 		}
 		//end of interface select if 2 is pressed
-		else if (mapLoaded == false && interfaceSelect != 3)					//validation to make sure a map has been loaded before outputting the map
+		else if (mapLoaded == false && interfaceSelect != 6)					//validation to make sure a map has been loaded before outputting the map
 		{
 			cout << "Please load a map first" << endl;
 			system("pause");
 		}
+		else if (interfaceSelect == 3)
+		{
+			rotateMap(mapArray);
+		}
+		else if (interfaceSelect == 4)
+		{
+			reflectMap(mapArray);
+			reflectMap(mapArray);
+		}
+		else if (interfaceSelect == 5)
+		{
+			transposeMap(mapArray);
+		}
 	}
-
-	while (interfaceSelect != 3);												//ends the program if 3 is pressed on the interface screen
+	while (interfaceSelect != 6);												//ends the program if 3 is pressed on the interface screen
 	{
 		return 0;
 	}
@@ -147,7 +168,7 @@ int passMountain(int currentRow, int mapArray[mapSize][mapSize], int currentColu
 		yOneUp = currentRow;
 	}
 	else
-	{
+	{		
 		yOneUp = currentRow + 1;										//the value below would be a number 1 above on the array
 	}
 	yOneUpVal = mapArray[yOneUp][currentColumn];						//gets the value of the number that is 1 up and 1 row across from where the user is
@@ -195,7 +216,7 @@ void loadMap(int mapArray[mapSize][mapSize], int mapSelect)
 {
 	if (mapSelect == 1)													//opens the selected map and inputs the data into the array, same for each if statement
 	{
-		ifstream infile("map1.txt");
+		ifstream infile("map1.txt");					
 		if (!infile)
 		{
 			cout << "error! Unable to open file" << endl;
@@ -245,6 +266,66 @@ void loadMap(int mapArray[mapSize][mapSize], int mapSelect)
 					infile >> mapArray[i][k];
 				}
 			}
+		}
+	}
+}
+
+void rotateMap(int mapArray[mapSize][mapSize])
+{
+	int rotatedMapArray[mapSize][mapSize];
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int k = 0; k < mapSize; k++)
+		{
+			rotatedMapArray[i][k] = mapArray[8 - k][i];
+		}
+	}
+
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int k = 0; k < mapSize; k++)
+		{
+			mapArray[i][k] = rotatedMapArray[i][k];
+		}
+	}
+}
+
+void reflectMap(int mapArray[mapSize][mapSize])
+{
+	int reflectedMapArray[mapSize][mapSize];
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int k = 0; k < mapSize; k++)
+		{
+			reflectedMapArray[i][k] = mapArray[k][8 - i];
+		}
+	}
+
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int k = 0; k < mapSize; k++)
+		{
+			mapArray[i][k] = reflectedMapArray[i][k];
+		}
+	}
+}
+
+void transposeMap(int mapArray[mapSize][mapSize])
+{
+	int transposedMapArray[mapSize][mapSize];
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int k = 0; k < mapSize; k++)
+		{
+			transposedMapArray[i][k] = mapArray[8 - k][8 - i];
+		}
+	}
+
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int k = 0; k < mapSize; k++)
+		{
+			mapArray[i][k] = transposedMapArray[i][k];
 		}
 	}
 }
